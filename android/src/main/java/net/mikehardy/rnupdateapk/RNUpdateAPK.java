@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -137,20 +136,30 @@ public class RNUpdateAPK extends ReactContextBaseJavaModule {
 
         if (Build.VERSION.SDK_INT >= 24) {
             // API24 and up has a package installer that can handle FileProvider content:// URIs
-            Uri contentUri;
-            try {
-                contentUri = FileProvider.getUriForFile(getReactApplicationContext(), fileProviderAuthority, file);
-            } catch (Exception e) {
-                // FIXME should be a Promise.reject really
-                Log.e("RNUpdateAPK", "installApk exception with authority name '" + fileProviderAuthority + "'", e);
-                throw e;
-            }
-            Intent installApp = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            installApp.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            installApp.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            installApp.setData(contentUri);
-            installApp.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, reactContext.getApplicationInfo().packageName);
-            reactContext.startActivity(installApp);
+//            Uri contentUri;
+//            try {
+//                contentUri = FileProvider.getUriForFile(getReactApplicationContext(), fileProviderAuthority, file);
+//            } catch (Exception e) {
+//                // FIXME should be a Promise.reject really
+//                Log.e("RNUpdateAPK", "installApk exception with authority name '" + fileProviderAuthority + "'", e);
+//                throw e;
+//            }
+//
+//            Intent installApp = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+//            installApp.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            installApp.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            installApp.setData(contentUri);
+//            installApp.putExtra(Intent.EXTRA_INSTALLER_PACKAGE_NAME, reactContext.getApplicationInfo().packageName);
+//
+//            reactContext.startActivity(installApp);
+
+            final String ACTION_MESSAGE = "com.mobilepower.terminal.message";
+            Intent intent = new Intent(ACTION_MESSAGE);
+            intent.putExtra("type", 3);
+            intent.putExtra("path", filePath);
+            Log.d("RNUpdateAPK", filePath);
+            reactContext.sendBroadcast(intent);
+            
         } else {
             // Old APIs do not handle content:// URIs, so use an old file:// style
             String cmd = "chmod 777 " + file;
