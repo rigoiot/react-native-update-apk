@@ -26,6 +26,14 @@ export class UpdateAPK {
     if (jobId !== -1) {
       return;
     }
+    if (this.options.fetchApkVersion) {
+      this.options.fetchApkVersion(
+        this.options.apkVersionUrl,
+        this.getApkVersionSuccess.bind(this),
+        this.getVersionError.bind(this)
+      );
+      return;
+    }
     if (!this.options.apkVersionUrl) {
       console.log("RNUpdateAPK::getApkVersion - apkVersionUrl doesn't exist.");
       return;
